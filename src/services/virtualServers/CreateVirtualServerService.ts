@@ -1,53 +1,56 @@
-import { VirtualServer } from "@prisma/client";
 import { VirtualServerRepository } from "../../repositories/VirtualServerRepository";
 
 interface CreateVirtualServerRequest {
   name: string;
   port: number;
-  mode: "http" | "https";
-  balance: "roundrobin" | "cookie";
+  mode: string;
+  balance: string;
   backends: string[];
   maxConn: number;
   maxQueue: number;
   timeouts: {
-    connect: string;
-    client: string;
-    server: string;
-    queue: string;
+    connect: number;
+    client: number;
+    server: number;
+    queue: number;
   };
 }
 
+export interface VirtualServerDomain {
+  id: string;
+  name: string;
+  status: string;
+  port: number;
+  mode: string;
+  balance: string;
+  backends: string[];
+  maxConn: number;
+  maxQueue: number;
+  timeouts: {
+    connect: number;
+    client: number;
+    server: number;
+    queue: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface CreateVirtualServerResponse {
-  virtualServer: VirtualServer;
+  virtualServer: VirtualServerDomain;
 }
 
 export class CreateVirtualServerService {
   constructor(private virtualServerRepository: VirtualServerRepository) {}
 
-  async execute({
-    name,
-    port,
-    mode,
-    balance,
-    backends,
-    maxConn,
-    maxQueue,
-    timeouts,
-  }: CreateVirtualServerRequest): Promise<CreateVirtualServerResponse> {
-    // if (![80, 443].includes(port)) {
-    //   throw new Error("Port not allowed. Please use 80 or 443.");
-    // }
+  async execute(
+    data: CreateVirtualServerRequest
+  ): Promise<CreateVirtualServerResponse> {
+    if (![80, 443].includes(data.port)) {
+      throw new Error("Port not allowed. Use 80 or 443.");
+    }
 
-    const virtualServer = await this.virtualServerRepository.create({
-      name,
-      port,
-      mode,
-      balance,
-      backends,
-      maxConn,
-      maxQueue,
-      timeouts,
-    });
+    const virtualServer = await this.virtualServerRepository.create(data);
 
     return { virtualServer };
   }
