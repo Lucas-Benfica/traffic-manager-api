@@ -42,9 +42,10 @@ model VirtualServer {
   maxQueue Int
 
   // Timeouts
-  // Usamos o tipo 'Json' do Postgres. Isso permite salvar o objeto
-  // { "connect": "5s", "client": "30s", ... }
-  timeouts Json
+  timeoutConnect Int
+  timeoutClient  Int
+  timeoutServer  Int
+  timeoutQueue   Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
