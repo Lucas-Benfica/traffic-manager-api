@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String // bcrypt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// Modelo do Virtual Server (Espelho do Front-end)
+model VirtualServer {
+  id      String @id @default(uuid())
+  name    String
+  
+  // Status: 'online', 'offline', 'error', 'maintenance'
+  status  String @default("offline")
+
+  // Configurações de Rede
+  port    Int    // 80 ou 443
+  mode    String // 'http' ou 'https'
+  balance String // 'roundrobin' ou 'cookie'
+
+  // Pool de Backends
+  // O PostgreSQL suporta arrays nativos de string (String[]).
+  // Perfeito para guardar ["10.0.0.1:80", "10.0.0.2:80"] sem criar outra tabela.
+  backends String[]
+
+  // Limites
+  maxConn  Int
+  maxQueue Int
+
+  // Timeouts
+  // Usamos o tipo 'Json' do Postgres. Isso permite salvar o objeto
+  // { "connect": "5s", "client": "30s", ... }
+  timeouts Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("virtual_servers")
+}
