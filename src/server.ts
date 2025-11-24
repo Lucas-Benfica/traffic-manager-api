@@ -9,7 +9,11 @@ import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
 const PORT = process.env.PORT || 3333;
 
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ["Content-Disposition"],
+  })
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {

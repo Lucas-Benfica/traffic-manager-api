@@ -15,27 +15,27 @@ export class DownloadVirtualServerConfigService {
       throw new Error("Virtual Server not found");
     }
 
-    // Montando o conteúdo do arquivo TXT
-    const lines = [
-      `# Configuration for ${server.name}`,
-      `port ${server.port}`,
-      `mode ${server.mode}`,
-      `balance ${server.balance}`,
-      '',
-      `maxconn ${server.maxConn}`,
-      `maxqueue ${server.maxQueue}`,
-      '',
-      `timeout connect ${server.timeouts.connect}s`,
-      `timeout client ${server.timeouts.client}s`,
-      `timeout server ${server.timeouts.server}s`,
-      `timeout queue ${server.timeouts.queue}s`,
-      '',
-      '# Backends',
-      ...server.backends.map((backend: string) => `backend ${backend}`),
-    ];
+    const formattedBackends = server.backends.map((backendString: string) => {
+      const [address, port] = backendString.split(":");
+      return {
+        address: address,
+        port: port ? parseInt(port, 10) : 80,
+      };
+    });
 
-    const content = lines.join('\n');
-    const filename = `${server.name.toLowerCase().replace(/\s+/g, '-')}.cfg`; // Ex: meu-server.cfg
+    const configData = {
+      name: server.name,
+      port: server.port,
+      mode: server.mode,
+      balance: server.balance,
+      backends: formattedBackends,
+      maxConn: server.maxConn,
+      maxQueue: server.maxQueue,
+      timeouts: server.timeouts,
+    };
+
+    const content = JSON.stringify(configData, null, 2);
+    const filename = `${server.name.toLowerCase().replace(/\s+/g, "-")}.json`;
 
     return { filename, content };
   }
