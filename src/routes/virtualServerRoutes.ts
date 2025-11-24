@@ -8,6 +8,7 @@ import {
 import {
   createVirtualServerController,
   deleteVirtualServerController,
+  downloadVirtualServerConfigController,
   getAllVirtualServersController,
   updateStatusVirtualServerController,
   updateVirtualServerController,
@@ -35,6 +36,11 @@ virtualServerRoutes.patch(
   "/:id",
   validateRequest(updateVirtualServerSchema),
   updateVirtualServerController
+);
+virtualServerRoutes.get(
+  "/:id/config",
+  validateRequest(virtualServerIdSchema),
+  downloadVirtualServerConfigController
 );
 
 export { virtualServerRoutes };

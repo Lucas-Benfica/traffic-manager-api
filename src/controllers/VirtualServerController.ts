@@ -5,6 +5,7 @@ import { CreateVirtualServerService } from "../services/virtualServers/CreateVir
 import { UpdateVirtualServerStatusService } from "../services/virtualServers/UpdateVirtualServerStatusService";
 import { DeleteVirtualServerService } from "../services/virtualServers/DeleteVirtualServerService";
 import { UpdateVirtualServerService } from "../services/virtualServers/UpdateVirtualServerService";
+import { DownloadVirtualServerConfigService } from "../services/virtualServers/DownloadVirtualServerConfigService";
 
 export async function getAllVirtualServersController(
   req: Request,
@@ -70,7 +71,10 @@ export async function deleteVirtualServerController(
   return res.status(204).send();
 }
 
-export async function updateVirtualServerController(req: Request, res: Response) {
+export async function updateVirtualServerController(
+  req: Request,
+  res: Response
+) {
   const { id } = req.params;
   const data = req.body;
 
@@ -82,4 +86,24 @@ export async function updateVirtualServerController(req: Request, res: Response)
   const response = await updateVirtualServerService.execute({ id, ...data });
 
   return res.status(200).json(response);
+}
+
+export async function downloadVirtualServerConfigController(
+  req: Request,
+  res: Response
+) {
+  const { id } = req.params;
+
+  const virtualServerRepository = new VirtualServerRepository();
+  const downloadVirtualServerConfigService =
+    new DownloadVirtualServerConfigService(virtualServerRepository);
+
+  const { filename, content } =
+    await downloadVirtualServerConfigService.execute(id);
+
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+  res.setHeader("Content-Type", "text/plain");
+
+  return res.send(content);
 }
