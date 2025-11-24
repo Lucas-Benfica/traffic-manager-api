@@ -46,9 +46,9 @@ export class CreateVirtualServerService {
   async execute(
     data: CreateVirtualServerRequest
   ): Promise<CreateVirtualServerResponse> {
-    if (![80, 443].includes(data.port)) {
-      throw new Error("Port not allowed. Use 80 or 443.");
-    }
+    // if (![80, 443].includes(data.port)) {
+    //   throw new Error("Port not allowed. Use 80 or 443.");
+    // }
 
     const virtualServer = await this.virtualServerRepository.create(data);
 

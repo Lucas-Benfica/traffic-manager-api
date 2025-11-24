@@ -1,9 +1,16 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares/validateRequest";
-import { createVirtualServerSchema } from "../schemas/virtualServerSchemas";
+import {
+  createVirtualServerSchema,
+  updateVirtualServerSchema,
+  virtualServerIdSchema,
+} from "../schemas/virtualServerSchemas";
 import {
   createVirtualServerController,
+  deleteVirtualServerController,
   getAllVirtualServersController,
+  updateStatusVirtualServerController,
+  updateVirtualServerController,
 } from "../controllers/VirtualServerController";
 
 const virtualServerRoutes = Router();
@@ -13,6 +20,21 @@ virtualServerRoutes.post(
   "/",
   validateRequest(createVirtualServerSchema),
   createVirtualServerController
+);
+virtualServerRoutes.patch(
+  "/:id/status",
+  validateRequest(virtualServerIdSchema),
+  updateStatusVirtualServerController
+);
+virtualServerRoutes.delete(
+  "/:id",
+  validateRequest(virtualServerIdSchema),
+  deleteVirtualServerController
+);
+virtualServerRoutes.patch(
+  "/:id",
+  validateRequest(updateVirtualServerSchema),
+  updateVirtualServerController
 );
 
 export { virtualServerRoutes };

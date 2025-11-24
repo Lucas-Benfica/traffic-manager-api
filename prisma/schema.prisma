@@ -24,8 +24,8 @@ model VirtualServer {
   id      String @id @default(uuid())
   name    String
   
-  // Status: 'online', 'offline', 'error', 'maintenance'
-  status  String @default("offline")
+  // Status: 'active', 'deactivated', 'online', 'offline', 'error', 'maintenance'
+  status  String @default("deactivated")
 
   // Configurações de Rede
   port    Int    // 80 ou 443

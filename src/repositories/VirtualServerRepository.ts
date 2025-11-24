@@ -71,7 +71,39 @@ export class VirtualServerRepository {
         timeoutServer: timeouts.server,
         timeoutQueue: timeouts.queue,
 
-        status: "offline",
+        status: "deactivated",
+      },
+    });
+
+    return this.mapToDomain(server);
+  }
+
+  async delete(id: string) {
+    await prisma.virtualServer.delete({
+      where: { id },
+    });
+  }
+
+  async updateStatus(id: string, status: string) {
+    const server = await prisma.virtualServer.update({
+      where: { id },
+      data: { status },
+    });
+
+    return this.mapToDomain(server);
+  }
+
+  async update(id: string, data: CreateVirtualServerParams) {
+    const { timeouts, ...rest } = data;
+
+    const server = await prisma.virtualServer.update({
+      where: { id },
+      data: {
+        ...rest,
+        timeoutConnect: timeouts.connect,
+        timeoutClient: timeouts.client,
+        timeoutServer: timeouts.server,
+        timeoutQueue: timeouts.queue,
       },
     });
 

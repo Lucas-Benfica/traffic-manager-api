@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { VirtualServerRepository } from "../repositories/VirtualServerRepository";
 import { GetAllVirtualServersService } from "../services/virtualServers/GetAllVirtualServersService";
 import { CreateVirtualServerService } from "../services/virtualServers/CreateVirtualServerService";
+import { UpdateVirtualServerStatusService } from "../services/virtualServers/UpdateVirtualServerStatusService";
+import { DeleteVirtualServerService } from "../services/virtualServers/DeleteVirtualServerService";
+import { UpdateVirtualServerService } from "../services/virtualServers/UpdateVirtualServerService";
 
 export async function getAllVirtualServersController(
   req: Request,
@@ -29,4 +32,54 @@ export async function createVirtualServerController(
   const response = await createVirtualServerService.execute(body);
 
   return res.status(201).json(response);
+}
+
+export async function updateStatusVirtualServerController(
+  req: Request,
+  res: Response
+) {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const virtualServerRepository = new VirtualServerRepository();
+  const updateVirtualServerStatusService = new UpdateVirtualServerStatusService(
+    virtualServerRepository
+  );
+
+  const response = await updateVirtualServerStatusService.execute({
+    id,
+    status,
+  });
+
+  return res.status(200).json(response);
+}
+
+export async function deleteVirtualServerController(
+  req: Request,
+  res: Response
+) {
+  const { id } = req.params;
+
+  const virtualServerRepository = new VirtualServerRepository();
+  const deleteVirtualServerService = new DeleteVirtualServerService(
+    virtualServerRepository
+  );
+
+  await deleteVirtualServerService.execute({ id });
+
+  return res.status(204).send();
+}
+
+export async function updateVirtualServerController(req: Request, res: Response) {
+  const { id } = req.params;
+  const data = req.body;
+
+  const virtualServerRepository = new VirtualServerRepository();
+  const updateVirtualServerService = new UpdateVirtualServerService(
+    virtualServerRepository
+  );
+
+  const response = await updateVirtualServerService.execute({ id, ...data });
+
+  return res.status(200).json(response);
 }
