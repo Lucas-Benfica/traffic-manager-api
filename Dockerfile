@@ -1,6 +1,9 @@
 # 1. Imagem base leve do Node
 FROM node:18-alpine
 
+# Instala o OpenSSL necessário para o Prisma funcionar no Alpine
+RUN apk add --no-cache openssl
+
 # 2. Diretório de trabalho dentro do container
 WORKDIR /app
 

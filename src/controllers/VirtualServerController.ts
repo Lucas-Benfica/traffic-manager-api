@@ -98,12 +98,13 @@ export async function downloadVirtualServerConfigController(
   const downloadVirtualServerConfigService =
     new DownloadVirtualServerConfigService(virtualServerRepository);
 
+  // O serviço agora também salva no disco, mas aqui pegamos o conteúdo para devolver ao navegador
   const { filename, content } =
     await downloadVirtualServerConfigService.execute(id);
 
   res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
 
-  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Content-Type", "application/json");
 
   return res.send(content);
 }
